@@ -14,7 +14,7 @@ A simple Python tool to create an offline audio mix from a YouTube playlist. Des
 ## Usage
 
 1. Clone or download this repository.
-2. Run the `setup_and_run.bat` file. This will:
+2. Run the `run.bat` file. This will:
     - Check for a virtual environment in the `.venv` directory.
     - Create the virtual environment if it doesn't exist.
     - Install the required packages from `requirements.txt`.
