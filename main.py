@@ -28,6 +28,14 @@ else:
     playlist_url = input("Please enter the YouTube playlist URL: ")
     download_songs_from_url(playlist_url)
 
+# Prompt user for crossfade length
+try:
+    crossfade_length_seconds = float(input("Please enter the desired crossfade length in seconds (e.g., 6 for 6 seconds): "))
+    crossfade_length_milliseconds = int(crossfade_length_seconds * 1000)  # Convert to milliseconds
+except ValueError:
+    print("Invalid input. Using default crossfade length of 6 seconds.")
+    crossfade_length_milliseconds = 6000
+
 # Load and Crossfade Songs
 songs = sorted(os.listdir("downloaded_songs/"), key=lambda x: int(x.split(".")[0]))  # Sort songs based on their playlist index
 final_audio = AudioSegment.empty()
@@ -37,12 +45,12 @@ for i in tqdm(range(len(songs) - 1), desc="Crossfading songs", unit="song"):
     song1 = AudioSegment.from_mp3(f"downloaded_songs/{songs[i]}")
     song2 = AudioSegment.from_mp3(f"downloaded_songs/{songs[i+1]}")
     
-    end_song1 = song1[-6000:]
-    start_song2 = song2[:6000]
-    crossfaded_segment = end_song1.append(start_song2, crossfade=6000)
+    end_song1 = song1[-crossfade_length_milliseconds:]
+    start_song2 = song2[:crossfade_length_milliseconds]
+    crossfaded_segment = end_song1.append(start_song2, crossfade=crossfade_length_milliseconds)
 
-    # Concatenate song1 without the last 6 seconds, then the crossfaded segment
-    final_audio += song1[:-6000] + crossfaded_segment
+    # Concatenate song1 without the last crossfade-length portion, then the crossfaded segment
+    final_audio += song1[:-crossfade_length_milliseconds] + crossfaded_segment
 
 # After all songs have been crossfaded, append the last song in its entirety
 final_audio += song2
